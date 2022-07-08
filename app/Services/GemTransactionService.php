@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\GemTransactionType;
 use App\Exceptions\NoEnoughGemException;
 use App\Models\GemTransaction;
 use App\Models\User;
@@ -12,44 +11,47 @@ use Throwable;
 
 class GemTransactionService
 {
+
     /**
      * @throws Throwable
      */
-    public static function increase(User $user, int $count, array $meta = []): GemTransaction
+    public static function increase(User $user, int $amount, array $tag = []): GemTransaction
     {
-        return DB::transaction(function () use ($user, $count, $meta) {
-            $transaction = self::transact($user, $count, GemTransactionType::INCREASE, $meta);
-            $userGem = UserGem::createOrFirstForUser($user);
-            $userGem->count += $count;
-            $userGem->save();
-            return $transaction;
-        });
+        return self::transact(...func_get_args());
     }
 
     /**
      * @throws Throwable
      */
-    public static function decrease(User $user, int $count, array $meta = []): GemTransaction
+    public static function decrease(User $user, int $amount, array $tag = []): GemTransaction
     {
-        return DB::transaction(function () use ($user, $count, $meta) {
-            $transaction = self::transact($user, $count, GemTransactionType::DECREASE, $meta);
-            $userGem = UserGem::createOrFirstForUser($user);
-            $userGem->count -= $count;
-            if ($userGem->count < 0) {
+        return self::transact($user, -$amount, $tag);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    private static function transact(User $user, int $amount, array $tag = []): GemTransaction
+    {
+        return DB::transaction(function () use ($user, $amount, $tag) {
+            UserGem::upsert(
+                ['user_id' => $user->id, 'gem_count' => $amount],
+                'user_id',
+                ['user_id' => $user->id, 'gem_count' => DB::raw("gem_count + $amount")]
+            );
+
+            $userGem = UserGem::find($user->id);
+
+            if ($userGem->gem_count < 0) {
                 throw new NoEnoughGemException();
             }
-            $userGem->save();
-            return $transaction;
-        });
-    }
 
-    private static function transact(User $user, int $count, GemTransactionType $type, array $meta = []): GemTransaction
-    {
-        return GemTransaction::create([
-            'user_id' => $user->id,
-            'count' => $count,
-            'type' => $type,
-            'meta' => json_encode($meta),
-        ]);
+            return GemTransaction::create([
+                'user_id' => $user->id,
+                'gem_added' => $amount,
+                'old_value' => $userGem->gem_count - $amount,
+                'tag' => json_encode($tag),
+            ]);
+        }, 3);
     }
 }

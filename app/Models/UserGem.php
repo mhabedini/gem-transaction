@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use App\Enums\GemTransactionType;
 use Database\Factories\UserGemFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
@@ -16,7 +14,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $user_id
- * @property int $count
+ * @property int $gem_count
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -37,14 +35,11 @@ use Illuminate\Support\Carbon;
  */
 class UserGem extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
-    public static function createOrFirstForUser(User $user): UserGem
-    {
-        return UserGem::firstOrCreate(['user_id' => $user->id], ['user_id' => $user->id]);
-    }
+    protected $primaryKey = 'user_id';
 
     public function user()
     {

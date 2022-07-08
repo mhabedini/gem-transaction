@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use App\Enums\GemTransactionType;
 use Database\Factories\GemTransactionFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 
@@ -16,7 +14,8 @@ use Illuminate\Support\Carbon;
  *
  * @property int $id
  * @property int $user_id
- * @property int $count
+ * @property int $gem_added
+ * @property int $old_value
  * @property int $type
  * @property string $meta
  * @property Carbon|null $created_at
@@ -41,7 +40,7 @@ use Illuminate\Support\Carbon;
  */
 class GemTransaction extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $guarded = ['id'];
 }

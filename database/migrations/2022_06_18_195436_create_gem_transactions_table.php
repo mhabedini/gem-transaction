@@ -11,11 +11,10 @@ return new class extends Migration {
         Schema::create('gem_transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->unsignedBigInteger('count');
-            $table->tinyInteger('type');
-            $table->json('meta');
+            $table->bigInteger('gem_added');
+            $table->unsignedBigInteger('old_value');
+            $table->json('tag');
             $table->timestamps();
-            $table->softDeletes();
 
             $table->index('user_id');
 
