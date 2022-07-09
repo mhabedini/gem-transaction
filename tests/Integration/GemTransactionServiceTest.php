@@ -1,6 +1,7 @@
 <?php
 
-use App\Enums\GemTransactionType;
+namespace Tests\Integration;
+
 use App\Exceptions\NoEnoughGemException;
 use App\Models\GemTransaction;
 use App\Models\User;
@@ -8,13 +9,14 @@ use App\Models\UserGem;
 use App\Services\GemTransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Throwable;
 
 class GemTransactionServiceTest extends TestCase
 {
     use RefreshDatabase;
 
     /**
-     * @throws Exception|Throwable
+     * @throws Throwable
      */
     public function testUserCanIncreaseItsGem(): void
     {
@@ -24,18 +26,19 @@ class GemTransactionServiceTest extends TestCase
 
         $this->assertDatabaseHas(GemTransaction::class, [
             'user_id' => $user['id'],
-            'type' => GemTransactionType::INCREASE
+            'gems_added' => $gemCount,
+            'old_value' => 0,
         ]);
 
         $this->assertDatabaseHas(UserGem::class, [
             'user_id' => $user['id'],
-            'count' => $gemCount,
+            'gem_count' => $gemCount,
         ]);
     }
 
 
     /**
-     * @throws Exception|Throwable
+     * @throws Throwable
      */
     public function testUserCanDecreaseItsGem(): void
     {
@@ -46,29 +49,31 @@ class GemTransactionServiceTest extends TestCase
 
         $this->assertDatabaseHas(GemTransaction::class, [
             'user_id' => $user['id'],
-            'type' => GemTransactionType::INCREASE
+            'gems_added' => $gemCount,
+            'old_value' => 0,
         ]);
 
         $this->assertDatabaseHas(UserGem::class, [
             'user_id' => $user['id'],
-            'count' => $gemCount,
+            'gem_count' => $gemCount,
         ]);
 
         GemTransactionService::decrease($user, $gemDecreaseAmount);
 
         $this->assertDatabaseHas(GemTransaction::class, [
             'user_id' => $user['id'],
-            'type' => GemTransactionType::DECREASE
+            'gems_added' => -$gemDecreaseAmount,
+            'old_value' => $gemCount,
         ]);
 
         $this->assertDatabaseHas(UserGem::class, [
             'user_id' => $user['id'],
-            'count' => $gemCount - $gemDecreaseAmount,
+            'gem_count' => $gemCount - $gemDecreaseAmount,
         ]);
     }
 
     /**
-     * @throws Exception|Throwable
+     * @throws Throwable
      */
     public function testDecreaseGemBelowZeroFails(): void
     {

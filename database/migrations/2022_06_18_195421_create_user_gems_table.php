@@ -9,11 +9,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('user_gems', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->unique();
-            $table->unsignedBigInteger('count')->default(0);
+            $table->foreignId('user_id')->primary();
+            $table->unsignedBigInteger('gem_count')->default(0);
             $table->timestamps();
-            $table->softDeletes();
 
             $table->foreign('user_id')->on('users')->references('id')->restrictOnDelete();
         });
