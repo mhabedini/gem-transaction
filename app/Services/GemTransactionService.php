@@ -48,7 +48,7 @@ class GemTransactionService
 
             return GemTransaction::create([
                 'user_id' => $user->id,
-                'gem_added' => $amount,
+                'gems_added' => $amount,
                 'old_value' => $userGem->gem_count - $amount,
                 'tag' => json_encode($tag),
             ]);

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $user_id
- * @property int $gem_added
+ * @property int $gems_added
  * @property int $old_value
  * @property string $tag
  * @property \Illuminate\Support\Carbon|null $created_at

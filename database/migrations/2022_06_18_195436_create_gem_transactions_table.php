@@ -11,7 +11,7 @@ return new class extends Migration {
         Schema::create('gem_transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->bigInteger('gem_added');
+            $table->bigInteger('gems_added');
             $table->unsignedBigInteger('old_value');
             $table->json('tag');
             $table->timestamps();

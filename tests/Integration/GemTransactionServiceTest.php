@@ -26,7 +26,7 @@ class GemTransactionServiceTest extends TestCase
 
         $this->assertDatabaseHas(GemTransaction::class, [
             'user_id' => $user['id'],
-            'gem_added' => $gemCount,
+            'gems_added' => $gemCount,
             'old_value' => 0,
         ]);
 
@@ -49,7 +49,7 @@ class GemTransactionServiceTest extends TestCase
 
         $this->assertDatabaseHas(GemTransaction::class, [
             'user_id' => $user['id'],
-            'gem_added' => $gemCount,
+            'gems_added' => $gemCount,
             'old_value' => 0,
         ]);
 
@@ -62,7 +62,7 @@ class GemTransactionServiceTest extends TestCase
 
         $this->assertDatabaseHas(GemTransaction::class, [
             'user_id' => $user['id'],
-            'gem_added' => -$gemDecreaseAmount,
+            'gems_added' => -$gemDecreaseAmount,
             'old_value' => $gemCount,
         ]);
 
